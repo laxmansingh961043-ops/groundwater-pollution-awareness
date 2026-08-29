@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>AquaTruth | Groundwater & Human Health</title>
+  <!-- Google Fonts + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #03070f;
+      color: #eef5ff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Glassmorphism core */
+    .glass-card {
+      background: rgba(8, 20, 35, 0.55);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      border: 1px solid rgba(0, 200, 200, 0.25);
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
+    }
+
+    /* custom scroll */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0e1a; }
+    ::-webkit-scrollbar-thumb { background: #00b4aa; border-radius: 8px; }
+
+    /* animations reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(0.2, 0.9, 0.4, 1), transform 0.8s ease;
+    }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* Buttons base + glow */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 180, 170, 0.12);
+      border: 1.5px solid #00cfc3;
+      padding: 0.75rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(4px);
+      text-decoration: none;
+    }
+    .btn i { transition: transform 0.2s; }
+    .btn:hover {
+      background: #00cfc3;
+      color: #031016;
+      box-shadow: 0 0 20px #00cfc3, 0 0 8px #7afff0;
+      transform: scale(1.03);
+      border-color: transparent;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    /* Hero video */
+    .hero {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+    #hero-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(0,0,0,0.5), rgba(0,20,40,0.85));
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      text-align: center;
+      padding: 2rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.6rem, 7vw, 5.2rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, #7ff9f0, #00cfc3);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .btn-group { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem; }
+
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1280px; margin: 0 auto; }
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(120deg, #aaf0ff, #00cfc3);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      display: inline-block;
+      margin-bottom: 2rem;
+    }
+
+    /* split layout */
+    .split-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .split-text { flex: 1; }
+    .split-image { flex: 1; border-radius: 2rem; overflow: hidden; }
+    .split-image img { width: 100%; height: auto; transition: transform 0.5s; }
+
+    /* impact cards */
+    .cards-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    .disease-card {
+      background: rgba(12, 25, 40, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 1.8rem;
+      padding: 1.8rem;
+      width: 260px;
+      text-align: center;
+      transition: all 0.3s;
+      border: 1px solid rgba(0,180,170,0.2);
+    }
+    .disease-card:hover {
+      transform: translateY(-8px);
+      border-color: #00cfc3;
+      box-shadow: 0 0 20px rgba(0,200,200,0.4);
+    }
+    .disease-card i { font-size: 2.8rem; color: #00cfc3; margin-bottom: 1rem; }
+
+    /* stats + progress */
+    .stats-glass {
+      background: rgba(0, 25, 35, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 2.5rem;
+      padding: 2.5rem;
+    }
+    .stat-item { text-align: center; margin: 1rem 0; }
+    .counter { font-size: 3rem; font-weight: 800; color: #7afff0; }
+    .progress-bar-bg {
+      background: #1e2a3a;
+      border-radius: 30px;
+      height: 12px;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      background: #00cfc3;
+      width: 0%;
+      height: 12px;
+      border-radius: 30px;
+      transition: width 1.2s ease;
+    }
+
+    /* solutions grid */
+    .solutions-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .sol-card {
+      background: rgba(18, 30, 45, 0.7);
+      backdrop-filter: blur(6px);
+      border-radius: 1.8rem;
+      padding: 1.8rem;
+      width: 250px;
+      text-align: center;
+      transition: 0.25s;
+    }
+    .sol-card button { margin-top: 1rem; background: transparent; border: 1px solid #00cfc3; border-radius: 40px; padding: 0.4rem 1.2rem; cursor: pointer; color: #caf0f8; transition: 0.2s; }
+    .sol-card button:hover { background: #00cfc3; color: #021016; box-shadow: 0 0 8px #00cfc3; }
+
+    /* modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: #0b1622e6;
+      backdrop-filter: blur(20px);
+      border-radius: 2rem;
+      max-width: 500px;
+      padding: 2rem;
+      border: 1px solid #00cfc3;
+      text-align: center;
+    }
+    .close-modal { background: #00cfc3; border: none; margin-top: 1rem; padding: 0.5rem 1.5rem; border-radius: 40px; cursor: pointer; }
+
+    footer { background: #01050c; padding: 2rem; text-align: center; }
+    .social-icons i { font-size: 1.6rem; margin: 0 10px; color: #9dd9ff; transition: 0.2s; cursor: pointer; }
+    .social-icons i:hover { color: #00cfc3; text-shadow: 0 0 8px cyan; }
+
+    @media (max-width: 760px) {
+      section { padding: 3rem 1rem; }
+      .btn-group { gap: 1rem; }
+      .btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hero Section with Buttons: Explore More + Watch Video -->
+<div class="hero" id="home">
+  <video autoplay muted loop playsinline id="hero-video">
+    <source src="https://cdn.pixabay.com/video/2022/09/09/130871-749888254_large.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1 class="reveal">Hidden Danger: <br>Groundwater Pollution</h1>
+    <p class="reveal" style="font-size:1.3rem; max-width:700px;">Toxic aquifers are poisoning millions — a silent health crisis beneath our feet.</p>
+    <div class="btn-group reveal">
+      <button class="btn" id="exploreMoreBtn"><i class="fas fa-arrow-down"></i> Explore More</button>
+      <button class="btn" id="watchHeroVideoBtn"><i class="fas fa-play"></i> Watch Video</button>
+    </div>
+  </div>
+  <div style="position:absolute; bottom:20px; left:50%; transform:translateX(-50%); z-index:3; color:#7afff0; animation: bounce 2s infinite;"><i class="fas fa-chevron-down"></i></div>
+</div>
+
+<!-- Problem Section + mandatory button "Learn Causes" expand content -->
+<section id="problem">
+  <div class="container">
+    <div class="split-grid reveal">
+      <div class="split-text">
+        <h2 class="section-title">The invisible threat</h2>
+        <p>Industrial runoff, agricultural chemicals, and untreated sewage seep into underground reserves. Once contaminated, aquifers remain polluted for decades — exposing millions to arsenic, nitrates, and heavy metals.</p>
+        <button id="learnCausesBtn" class="btn" style="margin-top:1.8rem;"><i class="fas fa-flask"></i> Learn Causes</button>
+        <div id="extraCauses" style="display:none; margin-top:1.5rem; background:rgba(0,180,170,0.1); border-radius:1.5rem; padding:1.2rem;">
+          <p><i class="fas fa-industry"></i> Industrial waste: 70% of heavy metal pollution.<br>
+          <i class="fas fa-tractor"></i> Fertilizers & pesticides: nitrate contamination.<br>
+          <i class="fas fa-dumpster"></i> Leaking septic systems: bacterial pathogens.</p>
+        </div>
+      </div>
+      <div class="split-image"><img src="https://images.pexels.com/photos/2233559/pexels-photo-2233559.jpeg?auto=compress&cs=tinysrgb&w=600" alt="polluted water" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Impact Section + mandatory "View All Effects" (modal popup) -->
+<section id="impact" style="background: radial-gradient(ellipse at top, #04111f, #01050c);">
+  <div class="container">
+    <h2 class="section-title reveal">Health impact: silent suffering</h2>
+    <div class="cards-row">
+      <div class="disease-card reveal"><i class="fas fa-lungs"></i><h3>Cancer</h3><p>Arsenic & chromium-6 increase bladder, lung cancer.</p></div>
+      <div class="disease-card reveal"><i class="fas fa-allergies"></i><h3>Skin diseases</h3><p>Chronic dermatitis & hyperkeratosis.</p></div>
+      <div class="disease-card reveal"><i class="fas fa-baby-carriage"></i><h3>Blue baby syndrome</h3><p>Nitrates in water affect infant oxygen levels.</p></div>
+    </div>
+    <button id="viewAllEffectsBtn" class="btn" style="margin: 0 auto; display:table;"><i class="fas fa-eye"></i> View All Effects</button>
+  </div>
+</section>
+
+<!-- Statistics Section with animated counters, progress bars + "View Full Report" -->
+<section id="statistics">
+  <div class="container">
+    <div class="stats-glass reveal">
+      <h2 class="section-title" style="display:block; text-align:center;">Shocking facts</h2>
+      <div class="stat-item"><span class="counter" data-target="80">0</span>% of global groundwater contains contaminants<br><div class="progress-bar-bg"><div class="progress-fill" data-progress="80"></div></div></div>
+      <div class="stat-item"><span class="counter" data-target="485">0</span> million people at risk of arsenic poisoning<br><div class="progress-bar-bg"><div class="progress-fill" data-progress="68"></div></div></div>
+      <div class="stat-item"><span class="counter" data-target="200">0</span>+ toxic chemicals found in aquifers<br><div class="progress-bar-bg"><div class="progress-fill" data-progress="92"></div></div></div>
+      <button id="fullReportBtn" class="btn" style="margin-top:2rem;"><i class="fas fa-chart-simple"></i> View Full Report</button>
+    </div>
+  </div>
+</section>
+
+<!-- Solutions Section: each card has "Learn Solution" button + main "Take Action" -->
+<section id="solutions">
+  <div class="container">
+    <h2 class="section-title reveal">Actionable solutions</h2>
+    <div class="solutions-grid">
+      <div class="sol-card reveal"><i class="fas fa-faucet"></i><h3>Filtration Systems</h3><button class="sol-btn" data-solution="Community RO & bio-sand filters remove heavy metals.">Learn Solution</button></div>
+      <div class="sol-card reveal"><i class="fas fa-chalkboard-user"></i><h3>Awareness Programs</h3><button class="sol-btn" data-solution="Educate farmers & locals about sustainable practices.">Learn Solution</button></div>
+      <div class="sol-card reveal"><i class="fas fa-gavel"></i><h3>Policy Reform</h3><button class="sol-btn" data-solution="Strict industrial discharge laws & groundwater monitoring.">Learn Solution</button></div>
+      <div class="sol-card reveal"><i class="fas fa-leaf"></i><h3>Green Recharge</h3><button class="sol-btn" data-solution="Rainwater harvesting & phytoremediation wetlands.">Learn Solution</button></div>
+    </div>
+    <div style="text-align:center; margin-top:3rem;">
+      <button id="takeActionBtn" class="btn"><i class="fas fa-hand-peace"></i> Take Action</button>
+    </div>
+  </div>
+</section>
+
+<!-- Video Section: embedded video + "Play Video" & "Share Awareness" -->
+<section id="videoSection" style="background:#02101c;">
+  <div class="container">
+    <h2 class="section-title reveal">Watch the reality</h2>
+    <div style="position:relative; border-radius:2rem; overflow:hidden; max-width:900px; margin:0 auto;">
+      <iframe id="awareVideo" width="100%" height="400" src="vid.mp4" title="Groundwater pollution" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="btn-group" style="justify-content:center; margin-top:1.8rem;">
+      <button id="playVideoBtn" class="btn"><i class="fas fa-play"></i> Play Video</button>
+      <button id="shareAwarenessBtn" class="btn"><i class="fas fa-share-alt"></i> Share Awareness</button>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Section: 3 buttons -->
+<section id="callToAction">
+  <div class="container" style="text-align:center;">
+    <h2 class="reveal" style="font-size:2.5rem;">Save Water Before It’s Too Late</h2>
+    <p class="reveal">Join the movement to protect groundwater and secure safe drinking water for all.</p>
+    <div class="btn-group reveal" style="margin-top:2rem;">
+      <button id="spreadAwarenessBtn" class="btn"><i class="fas fa-bullhorn"></i> Spread Awareness</button>
+      <button id="joinInitiativeBtn" class="btn"><i class="fas fa-users"></i> Join Initiative</button>
+      <button id="contactUsBtn" class="btn"><i class="fas fa-envelope"></i> Contact Us</button>
+    </div>
+  </div>
+</section>
+
+<!-- Footer + Back to Top button -->
+<footer>
+  <div class="container">
+    <div style="margin-bottom:1rem;">
+      <a href="#home" style="color:#caf0f8; margin:0 1rem; text-decoration:none;">Home</a>
+      <a href="#problem" style="color:#caf0f8; margin:0 1rem;">Problem</a>
+      <a href="#impact" style="color:#caf0f8; margin:0 1rem;">Impact</a>
+      <a href="#solutions" style="color:#caf0f8; margin:0 1rem;">Solutions</a>
+    </div>
+    <div class="social-icons">
+      <i class="fab fa-instagram"></i> <i class="fab fa-twitter"></i> <i class="fab fa-facebook"></i> <i class="fab fa-youtube"></i>
+    </div>
+    <button id="backToTopBtn" class="btn" style="margin-top:1.5rem; padding:0.5rem 1.5rem;"><i class="fas fa-arrow-up"></i> Back to Top</button>
+    <p style="margin-top:1.5rem; opacity:0.6;">© 2025 AquaTruth — Groundwater & Health Initiative</p>
+  </div>
+</footer>
+
+<!-- Modal for "View All Effects" -->
+<div id="effectsModal" class="modal">
+  <div class="modal-content">
+    <i class="fas fa-skull-crossbones" style="font-size:3rem; color:#00cfc3;"></i>
+    <h3>Detailed Health Effects</h3>
+    <p>🚨 Cancer (bladder, lung, kidney)<br>🚨 Neurological disorders (lead, arsenic)<br>🚨 Gastrointestinal infections<br>🚨 Reproductive harm & developmental issues in children<br>🚨 Chronic kidney disease from heavy metals</p>
+    <button class="close-modal btn">Close</button>
+  </div>
+</div>
+
+<script>
+  // Intersection Observer reveal animations
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => obs.observe(el));
+
+  // smooth scroll helper
+  function scrollToEl(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+  // HERO buttons
+  document.getElementById('exploreMoreBtn')?.addEventListener('click', () => scrollToEl('problem'));
+  document.getElementById('watchHeroVideoBtn')?.addEventListener('click', () => scrollToEl('videoSection'));
+
+  // Problem expand button
+  const learnBtn = document.getElementById('learnCausesBtn');
+  const extraDiv = document.getElementById('extraCauses');
+  learnBtn?.addEventListener('click', () => {
+    if(extraDiv.style.display === 'none' || extraDiv.style.display === '') {
+      extraDiv.style.display = 'block';
+      learnBtn.innerHTML = '<i class="fas fa-minus-circle"></i> Hide Causes';
+    } else {
+      extraDiv.style.display = 'none';
+      learnBtn.innerHTML = '<i class="fas fa-flask"></i> Learn Causes';
+    }
+  });
+
+  // Impact Modal (View All Effects)
+  const modal = document.getElementById('effectsModal');
+  const viewAllBtn = document.getElementById('viewAllEffectsBtn');
+  const closeModalBtn = document.querySelector('.close-modal');
+  viewAllBtn?.addEventListener('click', () => { modal.style.display = 'flex'; });
+  closeModalBtn?.addEventListener('click', () => { modal.style.display = 'none'; });
+  window.addEventListener('click', (e) => { if(e.target === modal) modal.style.display = 'none'; });
+
+  // Statistics Counters + Progress Bars animation
+  let counted = false;
+  const statSection = document.getElementById('statistics');
+  const counters = document.querySelectorAll('.counter');
+  const progressFills = document.querySelectorAll('.progress-fill');
+  function animateStats() {
+    if(counted) return;
+    counted = true;
+    counters.forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-target'));
+      let current = 0;
+      const increment = target / 70;
+      const update = () => {
+        current += increment;
+        if(current < target) { counter.innerText = Math.floor(current); requestAnimationFrame(update); }
+        else counter.innerText = target;
+      };
+      update();
+    });
+    progressFills.forEach(fill => {
+      const percent = fill.getAttribute('data-progress');
+      fill.style.width = percent + '%';
+    });
+  }
+  const statsObserver = new IntersectionObserver((entries) => {
+    if(entries[0].isIntersecting && !counted) animateStats();
+  }, { threshold: 0.4 });
+  if(statSection) statsObserver.observe(statSection);
+
+  // "View Full Report" button -> alert or expand message
+  document.getElementById('fullReportBtn')?.addEventListener('click', () => {
+    alert("📊 Full report: Over 2 billion people drink fecally contaminated water. Groundwater pollution contributes to 80% of diseases in developing nations. Visit UN Water for details.");
+  });
+
+  // Solutions: each Learn Solution button shows modal-like alert or toast (interactive)
+  const solBtns = document.querySelectorAll('.sol-btn');
+  solBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const solutionText = btn.getAttribute('data-solution') || "Adopt sustainable water management practices.";
+      alert(`💧 Solution insight: ${solutionText}`);
+    });
+  });
+  // main Take Action button
+  document.getElementById('takeActionBtn')?.addEventListener('click', () => {
+    alert("🌱 Take action now: Reduce chemical waste, support local water testing, advocate for clean water policies. Every drop counts!");
+  });
+
+  // Video Section buttons
+  const videoIframe = document.getElementById('awareVideo');
+  document.getElementById('playVideoBtn')?.addEventListener('click', () => {
+    // play video if possible by reloading src with autoplay param (or just scroll)
+    if(videoIframe) {
+      let src = videoIframe.src;
+      if(!src.includes('autoplay=1')) {
+        videoIframe.src = src + (src.includes('?') ? '&autoplay=1' : '?autoplay=1');
+      } else {
+        alert("Video is ready — click play on YouTube player.");
+      }
+    } else alert("Video ready.");
+  });
+  document.getElementById('shareAwarenessBtn')?.addEventListener('click', () => {
+    alert("📢 Share the crisis: Tell your community about groundwater pollution and its health impacts. Use #ProtectGroundwater");
+  });
+
+  // Call to Action buttons
+  document.getElementById('spreadAwarenessBtn')?.addEventListener('click', () => {
+    alert("🗣️ Spread awareness: Share this page, organize local workshops, post about groundwater safety.");
+  });
+  document.getElementById('joinInitiativeBtn')?.addEventListener('click', () => {
+    alert("🤝 Join our initiative: Sign up for newsletters, volunteer for water testing drives, and support filtration projects.");
+  });
+  document.getElementById('contactUsBtn')?.addEventListener('click', () => {
+    alert("📞 Contact us: Email hello@aquatruth.org or call +1 (555) 789-WATER. Together we act.");
+  });
+
+  // Back to Top Button
+  document.getElementById('backToTopBtn')?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // parallax on hero video scroll effect
+  window.addEventListener('scroll', () => {
+    const video = document.getElementById('hero-video');
+    if(video && window.scrollY < window.innerHeight) {
+      let scrollY = window.scrollY;
+      video.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.2}px))`;
+    }
+  });
+
+  // initial extra causes hidden
+  extraDiv.style.display = 'none';
+  // manual reveal on hero texts
+  document.querySelectorAll('.hero-content h1, .hero-content p, .hero-content .btn-group').forEach(el => { el.classList.add('reveal'); obs.observe(el); });
+</script>
+</body>
+</html>
